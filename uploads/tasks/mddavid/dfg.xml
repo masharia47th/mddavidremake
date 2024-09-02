@@ -1,0 +1,4 @@
+<!DOCTYPE connections>
+<qgsXYZTilesConnections version="1.0">
+    <xyztiles zmax="19" name="OpenStreetMap" url="https://tile.openstreetmap.org/{z}/{x}/{y}.png" zmin="0" password="" authcfg="" tilePixelRatio="0" username="" referer=""/>
+</qgsXYZTilesConnections>

@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Add New Task</h1>
+    <form method="POST" action="{{ url_for('employer.add_task') }}" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        
+        <!-- Basic Order Details -->
+        <div class="form-group">
+            {{ form.account_order_id.label }} 
+            {{ form.account_order_id(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.title.label }} 
+            {{ form.title(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.order_type_id.label }} 
+            {{ form.order_type_id(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.format_id.label }} 
+            {{ form.format_id(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.language_id.label }} 
+            {{ form.language_id(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.deadline_hours.label }} 
+            {{ form.deadline_hours(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.description.label }} 
+            {{ form.description(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.files.label(class="form-label") }}
+            {{ form.files(class="form-control", multiple=True) }}
+        </div>
+
+        <!-- Payment Details Section -->
+        <table class="table table-bordered" id="payment-details-table">
+            <thead>
+                <tr>
+                    <th>Paper Type</th>
+                    <th>Pages</th>
+                    <th>Cost per Page</th>
+                    <th>Total Cost</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="payment-details-container">
+                {% for payment_form in form.paper_details %}
+                <tr class="payment-detail" data-index="{{ loop.index0 }}">
+                    <td>
+                        {{ payment_form.paper_type_id(class="form-control paper-type") }}
+                    </td>
+                    <td>{{ payment_form.pages(class="form-control pages", min="1") }}</td>
+                    <td>{{ payment_form.cost_per_page(class="form-control cost-per-page", min="0", step="0.01") }}</td>
+                    <td>{{ payment_form.total_cost(class="form-control total-cost", readonly=true) }}</td>
+                    <td>
+                        <button type="button" class="btn btn-danger remove-payment-btn">Remove</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="button" id="add-payment-btn" class="btn btn-secondary">Add Payment</button>
+
+        <!-- Grand Total -->
+        <div class="form-group">
+            <label>Grand Total</label>
+            <input type="text" id="grand-total" class="form-control" readonly>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Add Task</button>
+    </form>
+
+    <!-- JavaScript to Handle Dynamic Fields and Calculations -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const paymentDetailsContainer = document.getElementById('payment-details-container');
+            const addPaymentBtn = document.getElementById('add-payment-btn');
+            let paymentIndex = {{ form.paper_details|length }};
+
+            function updateTotalCost(paymentDetail) {
+                const pages = parseFloat(paymentDetail.querySelector('.pages').value) || 0;
+                const costPerPage = parseFloat(paymentDetail.querySelector('.cost-per-page').value) || 0;
+                const totalCost = pages * costPerPage;
+                paymentDetail.querySelector('.total-cost').value = totalCost.toFixed(2);
+                updateGrandTotal();
+            }
+
+            function updateGrandTotal() {
+                let grandTotal = 0;
+                document.querySelectorAll('.total-cost').forEach(input => {
+                    grandTotal += parseFloat(input.value) || 0;
+                });
+                document.getElementById('grand-total').value = grandTotal.toFixed(2);
+            }
+
+            addPaymentBtn.addEventListener('click', function () {
+                const newPaymentDetail = paymentDetailsContainer.querySelector('.payment-detail').cloneNode(true);
+                newPaymentDetail.setAttribute('data-index', paymentIndex);
+                newPaymentDetail.querySelectorAll('input, select').forEach(input => {
+                    const name = input.getAttribute('name');
+                    input.setAttribute('name', name.replace(/\d+/, paymentIndex));
+                    input.value = '';
+                });
+                paymentDetailsContainer.appendChild(newPaymentDetail);
+                paymentIndex++;
+            });
+
+            paymentDetailsContainer.addEventListener('input', function (event) {
+                if (event.target.classList.contains('pages') || event.target.classList.contains('cost-per-page')) {
+                    const paymentDetail = event.target.closest('.payment-detail');
+                    updateTotalCost(paymentDetail);
+                }
+            });
+
+            paymentDetailsContainer.addEventListener('click', function (event) {
+                if (event.target.classList.contains('remove-payment-btn')) {
+                    const row = event.target.closest('.payment-detail');
+                    if (row && paymentDetailsContainer.children.length > 1) {
+                        row.remove();
+                        updateGrandTotal();
+                    }
+                }
+            });
+
+            // Initial calculation
+            document.querySelectorAll('.payment-detail').forEach(updateTotalCost);
+        });
+    </script>
+{% endblock %}

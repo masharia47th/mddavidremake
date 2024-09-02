@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>Manage Roles</h2>
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.name.label }}
+            {{ form.name(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
+    </form>
+
+    <h3>Existing Roles</h3>
+    <ul>
+        {% for role in roles %}
+            <li>{{ role.name }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

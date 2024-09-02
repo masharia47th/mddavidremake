@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Manage Entities</h1>
+
+  <!-- Order Type Form -->
+  <h2>SUBJECTS </h2>
+  <form method="POST">
+    {{ order_type_form.hidden_tag() }}
+    <p>
+      {{ order_type_form.name.label }}<br>
+      {{ order_type_form.name(size=32) }}<br>
+      {% for error in order_type_form.name.errors %}
+        <span class="error">{{ error }}</span><br>
+      {% endfor %}
+    </p>
+    <p>
+      <input type="hidden" name="form_type" value="order_type">
+      {{ order_type_form.submit() }}
+    </p>
+  </form>
+
+  <!-- Paper Type Form -->
+  <h2>Add Paper Type</h2>
+  <form method="POST">
+    {{ paper_type_form.hidden_tag() }}
+    <p>
+      {{ paper_type_form.name.label }}<br>
+      {{ paper_type_form.name(size=32) }}<br>
+      {% for error in paper_type_form.name.errors %}
+        <span class="error">{{ error }}</span><br>
+      {% endfor %}
+    </p>
+    <p>
+      <input type="hidden" name="form_type" value="paper_type">
+      {{ paper_type_form.submit() }}
+    </p>
+  </form>
+
+  <!-- Format Form -->
+  <h2>Add Format</h2>
+  <form method="POST">
+    {{ format_form.hidden_tag() }}
+    <p>
+      {{ format_form.name.label }}<br>
+      {{ format_form.name(size=32) }}<br>
+      {% for error in format_form.name.errors %}
+        <span class="error">{{ error }}</span><br>
+      {% endfor %}
+    </p>
+    <p>
+      <input type="hidden" name="form_type" value="format">
+      {{ format_form.submit() }}
+    </p>
+  </form>
+
+  <!-- Language Form -->
+  <h2>Add Language</h2>
+  <form method="POST">
+    {{ language_form.hidden_tag() }}
+    <p>
+      {{ language_form.name.label }}<br>
+      {{ language_form.name(size=32) }}<br>
+      {% for error in language_form.name.errors %}
+        <span class="error">{{ error }}</span><br>
+      {% endfor %}
+    </p>
+    <p>
+      <input type="hidden" name="form_type" value="language">
+      {{ language_form.submit() }}
+    </p>
+  </form>
+
+  <!-- Display Existing Entities -->
+  <h2>Existing Subjects </h2>
+  <ul>
+    {% for order_type in order_types %}
+      <li>{{ order_type.name }}</li>
+    {% endfor %}
+  </ul>
+
+  <h2>Existing Paper Types</h2>
+  <ul>
+    {% for paper_type in paper_types %}
+      <li>{{ paper_type.name }}</li>
+    {% endfor %}
+  </ul>
+
+  <h2>Existing Formats</h2>
+  <ul>
+    {% for format in formats %}
+      <li>{{ format.name }}</li>
+    {% endfor %}
+  </ul>
+
+  <h2>Existing Languages</h2>
+  <ul>
+    {% for language in languages %}
+      <li>{{ language.name }}</li>
+    {% endfor %}
+  </ul>
+{% endblock %}
